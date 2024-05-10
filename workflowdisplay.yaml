@@ -18,8 +18,12 @@ Views:
                 data: FragmenterScore_Values
             -   title: "Identifier"
                 data: Identifier
-            -   title: "plPeaks"
-                data: plPeaks
+            -   title: "NumberOfExplPeaks"
+                data: NoExplPeaks
+            -   title: "NumberPeaksUsed"
+                data: NumberPeaksUsed
+            -   title: "cluster index"
+                data: cluster index
 -   name: random_walk_graphml
     displayname: Random walk structures graphml
     viewname: random_walk_graphml
