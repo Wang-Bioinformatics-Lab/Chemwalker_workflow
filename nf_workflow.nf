@@ -11,7 +11,7 @@ params.ppm=15
 // CPUs and Cores for the workflow
 params.num_processes = 8  
 params.max_cpus_per_process = 1  //  TODO : update if the chemwalker process uses parallelization (more than 1 cpus)
-
+params.memory = '8 GB'
 
 // Workflow Boiler Plate
 params.OMETALINKING_YAML = "flow_filelinking.yaml"
@@ -39,6 +39,7 @@ process generateComps {
 
 process chemWalker {
     cpus params.max_cpus_per_process
+    memory params.memory
     publishDir "${params.publishdir}/tsv_files_directory", mode: 'copy'
 
     conda "$TOOL_FOLDER/conda_env.yml"
