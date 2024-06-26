@@ -1,99 +1,99 @@
-workflowname: chemwalker_nextflow_workflow
-workflowdescription: chemwalker_nextflow_workflow
-workflowlongdescription: workflow to run ChemWalker tool. See https://doi.org/10.1093/bioinformatics/btad078 and https://github.com/computational-chemical-biology/ChemWalker/
-workflowversion: "0.2"
-workflowfile: nf_workflow.nf
-workflowautohide: false
-adminonly: false
-#This maps the parameters from an input form to those that will appear in nextflow
-parameterlist:
-    - displayname: Mandatory parameters
-      paramtype: section
+  workflowname: chemwalker_nextflow_workflow
+  workflowdescription: chemwalker_nextflow_workflow
+  workflowlongdescription: workflow to run ChemWalker tool. See https://doi.org/10.1093/bioinformatics/btad078 and https://github.com/computational-chemical-biology/ChemWalker/
+  workflowversion: "0.2"
+  workflowfile: nf_workflow.nf
+  workflowautohide: false
+  adminonly: false
+  #This maps the parameters from an input form to those that will appear in nextflow
+  parameterlist:
+      - displayname: Mandatory parameters
+        paramtype: section
 
-    - displayname: GNPS2, FBMN or GNPS v2 task id
-      paramtype: text
-      nf_paramname: taskid
-      formplaceholder: Enter the GNPS2, FBMN or GNPS v2 task id
-      formvalue: ""
-      tooltip: "Task ID of the featured based molecular network"
+      - displayname: GNPS2, FBMN or GNPS v2 task id
+        paramtype: text
+        nf_paramname: taskid
+        formplaceholder: Enter the GNPS2, FBMN or GNPS v2 task id
+        formvalue: ""
+        tooltip: "Task ID of the featured based molecular network"
 
-    - displayname: Workflow type (FBMN or V2)
-      paramtype: select
-      nf_paramname: workflow
-      formvalue: "FBMN-gnps2"
-      options:
-        - value: "FBMN-gnps2"
-          display: GNPS2
-        - value: "FBMN"
-          display: FBMN
-        - value: "V2"
-          display: V2
-        
+      - displayname: Workflow type (FBMN or V2)
+        paramtype: select
+        nf_paramname: workflow
+        formvalue: "FBMN-gnps2"
+        options:
+          - value: "FBMN-gnps2"
+            display: GNPS2
+          - value: "FBMN"
+            display: FBMN
+          - value: "V2"
+            display: V2
+          
 
-    - displayname: Component (Molecular family) index. Use 0 if you want to introduce all networks. 
-      paramtype: text
-      nf_paramname: comp
-      formplaceholder: Choose the network component id from the FBMN to run the chemwalker on it. 
-      formvalue: ""
-      tooltip: "Component (Molecular family) index"
+      - displayname: Component (Molecular family) index. 
+        paramtype: text
+        nf_paramname: comp
+        formplaceholder: Choose the network component id from the FBMN to run the chemwalker on it. 
+        formvalue: ""
+        tooltip: "Component (Molecular family) index. Not able to run for all components concurrently. Please run for one component at a time."
 
-    - displayname: Ionization mode
-      paramtype: select
-      nf_paramname: ion_mode
-      formvalue: 1
-      options:
-        - value: 1
-          display: Positive
-        - value: 0
-          display: Negative
+      - displayname: Ionization mode
+        paramtype: select
+        nf_paramname: ion_mode
+        formvalue: 1
+        options:
+          - value: 1
+            display: Positive
+          - value: 0
+            display: Negative
 
-    - displayname: Adduct
-      paramtype: select
-      nf_paramname: adduct
-      formvalue: "[M+H]+"
-      options:
-        - value: "[M+H]+"
-          display: "[M+H]+"
-        - value: "[M+NH4]+"
-          display: "[M+NH4]+"
-        - value: "[M+Na]+"
-          display: "[M+Na]+"
-        - value: "[M+K]+"
-          display: "[M+K]+"
-        - value: "[M+K]+"
-          display: "[M+K]+"
-        - value: "[M+CH3OH+H]+"
-          display: "[M+CH3OH+H]+"
-        - value: "[M+ACN+H]+"
-          display: "[M+ACN+H]+"
-        - value: "[M+ACN+Na]+"
-          display: "[M+ACN+Na]+"
-        - value: "[M]+"
-          display: "[M]+"
-        - value: "[M-H]-"
-          display: "[M-H]-"
-        - value: "[M+Cl]-"
-          display: "[M+Cl]-"
-        - value: "[M+HCOO]-"
-          display: "[M+HCOO]-"
-        - value: "[M+CH3COO]-"
-          display: "[M+CH3COO]-"
-        - value: "[M]-"
-          display: "[M]-"
+      - displayname: Adduct
+        paramtype: select
+        nf_paramname: adduct
+        formvalue: "[M+H]+"
+        options:
+          - value: "[M+H]+"
+            display: "[M+H]+"
+          - value: "[M+NH4]+"
+            display: "[M+NH4]+"
+          - value: "[M+Na]+"
+            display: "[M+Na]+"
+          - value: "[M+K]+"
+            display: "[M+K]+"
+          - value: "[M+K]+"
+            display: "[M+K]+"
+          - value: "[M+CH3OH+H]+"
+            display: "[M+CH3OH+H]+"
+          - value: "[M+ACN+H]+"
+            display: "[M+ACN+H]+"
+          - value: "[M+ACN+Na]+"
+            display: "[M+ACN+Na]+"
+          - value: "[M]+"
+            display: "[M]+"
+          - value: "[M-H]-"
+            display: "[M-H]-"
+          - value: "[M+Cl]-"
+            display: "[M+Cl]-"
+          - value: "[M+HCOO]-"
+            display: "[M+HCOO]-"
+          - value: "[M+CH3COO]-"
+            display: "[M+CH3COO]-"
+          - value: "[M]-"
+            display: "[M]-"
 
-    - displayname: ppm tolerance
-      paramtype: text
-      nf_paramname: ppm
-      formvalue: "15"
+      - displayname: ppm tolerance
+        paramtype: text
+        nf_paramname: ppm
+        formvalue: "15"
 
-    - displayname: DB file
-      paramtype: fileselector
-      nf_paramname: user_db
-      formplaceholder: DB file in PSV format (| separator). 
-      formvalue: "LIBRARYLOCATION/STRUCTURE/Chemwalker/COCONUT.psv"
-      tooltip: "To create a user specific database, see https://ccms-ucsd.github.io/GNPSDocumentation/nap/#structure-database"
-      targettaskfolder: input_db
-      optional: true
-      selectsinglefile: true 
-      folderunroll: true
-    
+      - displayname: DB file
+        paramtype: fileselector
+        nf_paramname: user_db
+        formplaceholder: DB file in PSV format (| separator). 
+        formvalue: "LIBRARYLOCATION/STRUCTURE/Chemwalker/COCONUT.psv"
+        tooltip: "To create a user specific database, see https://ccms-ucsd.github.io/GNPSDocumentation/nap/#structure-database"
+        targettaskfolder: input_db
+        optional: true
+        selectsinglefile: true 
+        folderunroll: true
+      
