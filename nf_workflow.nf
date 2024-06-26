@@ -116,22 +116,24 @@ workflow {
     
     db = Channel.fromPath(params.user_db)
     
-    
     if (comp == 0){
-        components_file = generateComps(taskid, workflow)
-        
-        components_channel = components_file.splitText().map{ it.trim() }
-        
-        tsv_files_channel = Channel.of([])
-        components_channel.each{ component -> 
-        (tsv_file, graphml_file) = chemWalker(taskid, workflow, component, savegraph, db, metfragpath, params.ion_mode, params.adduct, params.ppm)
-        tsv_files_channel = tsv_files_channel.mix(chemWalker.out.tsv_file)
-        }.collect()
-        
-        //tsv_files_channel.view()
-        mergeTSV(tsv_files_channel.collect())
-        
+        error "Component number must be greater than 0. Given: ${comp}"
     }
+    // if (comp == 0){
+
+    //     components_file = generateComps(taskid, workflow)
+        
+    //     components_channel = components_file.splitText().map{ it.trim() }
+        
+    //     tsv_files_channel = Channel.of([])
+    //     components_channel.each{ component -> 
+    //     (tsv_file, graphml_file) = chemWalker(taskid, workflow, component, savegraph, db, metfragpath, params.ion_mode, params.adduct, params.ppm)
+    //     tsv_files_channel = tsv_files_channel.mix(chemWalker.out.tsv_file)
+    //     }.collect()
+        
+    //     mergeTSV(tsv_files_channel.collect())
+        
+    // }
     else{    
         chemWalker(taskid, workflow, comp, savegraph, db, metfragpath, params.ion_mode, params.adduct, params.ppm)
     }
