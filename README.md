@@ -49,6 +49,15 @@ conda activate chemwalker-env
 nextflow [options] ./nf_workflow.nf --annotations="$(annotations_file)" --path_to_spectra="$(path_to_spectra)" --ppm_tolerance=$(ppm_tolerance) --resume -c nextflow.config
 ```
 
+## Deploy in your own server
+
+Install nextflow according to the [documentation](https://www.nextflow.io/docs/latest/install.html). And run the previous commands. You can specify the resources with the next parameters:
+```
+params.num_processes = 8 // TODO USE ACCORDING TO YOUR SERVER RESOURCES
+params.max_cpus_per_process = 1 // TODO USE ACCORDING TO YOUR SERVER RESOURCES
+params.memory = '8 GB' // TODO USE ACCORDING TO YOUR SERVER RESOURCES
+```
+
 
 ## Deployment in GNPS2
 
