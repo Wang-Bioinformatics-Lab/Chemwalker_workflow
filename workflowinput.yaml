@@ -1,7 +1,7 @@
   workflowname: chemwalker_nextflow_workflow
   workflowdescription: chemwalker_nextflow_workflow
   workflowlongdescription: workflow to run ChemWalker tool. See https://doi.org/10.1093/bioinformatics/btad078 and https://github.com/computational-chemical-biology/ChemWalker/
-  workflowversion: "0.2"
+  workflowversion: "0.3"
   workflowfile: nf_workflow.nf
   workflowautohide: false
   adminonly: false

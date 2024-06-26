@@ -29,4 +29,4 @@ Views:
     viewname: random_walk_graphml
     displaytype: download
     parameters:
-        filename: nf_output/random_walk_output.graphml
+        filename: nf_output/graphml_files.tar.gz

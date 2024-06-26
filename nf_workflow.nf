@@ -16,11 +16,10 @@ params.memory = '8 GB'
 // Workflow Boiler Plate
 params.OMETALINKING_YAML = "flow_filelinking.yaml"
 params.OMETAPARAM_YAML = "job_parameters.yaml"
-params.publishdir = "./nf_output"
 TOOL_FOLDER = "$baseDir/bin"
 
 process generateComps {
-    publishDir "$params.publishdir", mode: 'copy'
+    publishDir "./nf_output", mode: 'copy', overwrite: false
 
     conda "$TOOL_FOLDER/conda_env.yml"
     
@@ -40,7 +39,7 @@ process generateComps {
 process chemWalker {
     cpus params.max_cpus_per_process
     memory params.memory
-    publishDir "${params.publishdir}/tsv_files_directory", mode: 'copy'
+    publishDir "./nf_output", mode: 'copy', overwrite: false
 
     conda "$TOOL_FOLDER/conda_env.yml"
 
@@ -55,41 +54,17 @@ process chemWalker {
     val adduct
     val ppm
     
-
     output:
     path "${comp}_output_file.tsv", optional: true, emit: tsv_file
-    path "${comp}_output_file.graphml", optional: true
+    path "${comp}_output_file.graphml", optional: true, emit: graphml_file
     
-    
-    // echo $comp > ${comp}_output_file.tsv
-    // echo $comp > ${comp}_output_file.graphml
-    """    
+    """
     python $TOOL_FOLDER/ChemWalker/bin/network_walk random-walk --taskid $taskid --workflow $workflow --comp $comp --out "${comp}_output_file" --savegraph $savegraph --db $db --metfragpath $metfragpath --kw \'{"ispositive": $ion_mode, "adduct": "$adduct", "ppm": $ppm}\'
     """
 }
 
-
 process mergeTSV {
-    publishDir "${params.publishdir}", mode: 'copy'
-    conda "$TOOL_FOLDER/conda_env.yml"
-    // This process is not working because csvstack does not work with \t separators. TODO Speak with Ricardo if we can use , or ; and escape strings with quotes ""
-    cpus = 1
-    input:
-    path tsv_files
-
-    output:
-    path 'random_walk_output.tsv'
-
-    script:
-    """
-
-    csvstack $tsv_files > random_walk_output.tsv
-    """
-}
-
-
-process mergeTSVPython {
-    publishDir "${params.publishdir}/tsv_files_directory", mode: 'copy'
+    publishDir "./nf_output", mode: 'copy', overwrite: false
     conda "$TOOL_FOLDER/conda_env.yml"
     cpus = 1
     
@@ -101,10 +76,25 @@ process mergeTSVPython {
 
     script:
     """
-    python $TOOL_FOLDER/merge_tsv.py --directory tsv_files_directory --output random_walk_output.tsv
+    awk 'FNR==1 && NR!=1 { next; } { print }' ${tsv_files.join(' ')} > random_walk_output.tsv
     """
 }
 
+process zipGraphML {
+    publishDir "./nf_output", mode: 'copy', overwrite: false
+    conda "$TOOL_FOLDER/conda_env.yml"
+    cpus = 1
+    input:
+    path graphml_files
+
+    output:
+    path 'graphml_files.tar.gz'
+
+    script:
+    """
+    tar -cvzf graphml_files.tar.gz $graphml_files
+    """
+}
 
 workflow {
     cpus = params.num_processes
@@ -113,30 +103,32 @@ workflow {
     comp = params.comp
     savegraph = params.savegraph
     metfragpath = Channel.fromPath("$TOOL_FOLDER/ChemWalker/bin/MetFrag2.3-CL.jar")
-    
     db = Channel.fromPath(params.user_db)
-    
-    if (comp == 0){
+    try {
+        comp = comp as Integer
+    } catch (Exception e) {
+        error "Parameter 'comp' must be an integer. Given: ${params.comp}"
+    }
+    if (comp <= 0){
+    // if (comp < 0){
         error "Component number must be greater than 0. Given: ${comp}"
     }
-    // if (comp == 0){
-
+    // else if (comp == 0){
     //     components_file = generateComps(taskid, workflow)
-        
     //     components_channel = components_file.splitText().map{ it.trim() }
-        
-    //     tsv_files_channel = Channel.of([])
-    //     components_channel.each{ component -> 
-    //     (tsv_file, graphml_file) = chemWalker(taskid, workflow, component, savegraph, db, metfragpath, params.ion_mode, params.adduct, params.ppm)
-    //     tsv_files_channel = tsv_files_channel.mix(chemWalker.out.tsv_file)
-    //     }.collect()
-        
-    //     mergeTSV(tsv_files_channel.collect())
-        
     // }
-    else{    
-        chemWalker(taskid, workflow, comp, savegraph, db, metfragpath, params.ion_mode, params.adduct, params.ppm)
+    else{
+        components_channel = Channel.of(comp)
     }
-    
+
+        tsv_files_channel = Channel.empty()
+        graphml_files_channel = Channel.empty()
+
+        (tsv_file, graphml_file) = chemWalker(taskid, workflow, components_channel, savegraph, db, metfragpath, params.ion_mode, params.adduct, params.ppm)
+        tsv_files_channel = tsv_files_channel.mix(chemWalker.out.tsv_file)
+        graphml_files_channel = graphml_files_channel.mix(chemWalker.out.graphml_file)
+        
+        mergeTSV(tsv_files_channel.collect()) 
+        zipGraphML(graphml_files_channel.collect())
 }
 
