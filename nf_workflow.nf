@@ -92,7 +92,7 @@ process zipGraphML {
 
     script:
     """
-    tar -cvzf graphml_files.tar.gz $graphml_files
+    tar -cvzhf graphml_files.tar.gz $graphml_files
     """
 }
 
