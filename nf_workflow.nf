@@ -109,8 +109,8 @@ workflow {
     } catch (Exception e) {
         error "Parameter 'comp' must be an integer. Given: ${params.comp}"
     }
-    // if (comp <= 0){
-    if (comp < 0){
+    if (comp <= 0){
+    //if (comp < 0){
         error "Component number must be greater than 0. Given: ${comp}"
     }
     else if (comp == 0){
